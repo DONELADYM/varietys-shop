@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variety's Shop — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#b8965a;--dark:#1a1714;--cream:#faf8f4;--soft:#8c8278;--danger:#dc3545;--success:#28a745}
+body{font-family:'DM Sans',sans-serif;background:#f5f5f5;color:var(--dark)}
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark)}
+.login-box{background:#fff;padding:2.5rem;width:100%;max-width:360px;border-top:3px solid var(--gold)}
+.login-box h1{font-size:1.3rem;font-weight:500;margin-bottom:6px}
+.login-box p{font-size:13px;color:var(--soft);margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+label{font-size:12px;font-weight:500;display:block;margin-bottom:4px;color:var(--soft);text-transform:uppercase;letter-spacing:.05em}
+input,select,textarea{width:100%;padding:8px 12px;border:1px solid #ddd;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+.btn{padding:10px 20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;transition:all .2s}
+.btn-primary{background:var(--gold);color:#fff;width:100%}
+.btn-primary:hover{background:#a07840}
+.btn-danger{background:var(--danger);color:#fff;padding:6px 14px;font-size:12px}
+.btn-edit{background:var(--dark);color:#fff;padding:6px 14px;font-size:12px}
+.btn-small{padding:6px 14px;font-size:12px}
+.admin-layout{display:none;min-height:100vh}
+.sidebar{width:220px;background:var(--dark);position:fixed;top:0;left:0;bottom:0;padding:1.5rem}
+.sidebar-brand{color:var(--gold);font-size:1rem;font-weight:500;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #333}
+.sidebar-brand span{display:block;font-size:11px;color:#666;font-weight:300;margin-top:2px}
+.nav-item{display:block;color:#aaa;font-size:13px;padding:8px 12px;cursor:pointer;border-radius:4px;margin-bottom:4px;transition:all .2s}
+.nav-item:hover,.nav-item.active{background:#2a2520;color:#fff}
+.main{margin-left:220px;padding:2rem}
+.page{display:none}
+.page.active{display:block}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.page-title{font-size:1.2rem;font-weight:500}
+.products-table{width:100%;background:#fff;border-collapse:collapse}
+.products-table th{background:var(--dark);color:#fff;padding:10px 14px;text-align:left;font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.products-table td{padding:12px 14px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle}
+.products-table tr:hover td{background:#fafafa}
+.product-thumb{width:50px;height:50px;object-fit:cover;border-radius:4px}
+.product-thumb-placeholder{width:50px;height:50px;background:#f0f0f0;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.badge{display:inline-block;padding:3px 8px;font-size:11px;border-radius:2px;font-weight:500}
+.badge-bundle{background:#fff3cd;color:#856404}
+.badge-new{background:#d1ecf1;color:#0c5460}
+.badge-active{background:#d4edda;color:#155724}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:#fff;padding:2rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.modal-title{font-size:1rem;font-weight:500}
+.close-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;color:#aaa}
+.close-btn:hover{color:var(--dark)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.img-preview{width:100%;height:150px;background:#f5f5f5;border:2px dashed #ddd;display:flex;align-items:center;justify-content:center;margin-top:6px;cursor:pointer;position:relative;overflow:hidden}
+.img-preview img{width:100%;height:100%;object-fit:cover}
+.img-preview-text{font-size:12px;color:#aaa;text-align:center}
+.img-preview input[type=file]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.alert{padding:10px 14px;font-size:13px;margin-bottom:1rem;border-radius:2px}
+.alert-success{background:#d4edda;color:#155724}
+.alert-error{background:#f8d7da;color:#721c24}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:#fff;padding:1.2rem;border-left:3px solid var(--gold)}
+.stat-label{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.stat-value{font-size:1.8rem;font-weight:300}
+.logout-btn{position:absolute;bottom:1.5rem;left:1.5rem;right:1.5rem;background:transparent;border:1px solid #333;color:#666;padding:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.logout-btn:hover{border-color:#666;color:#aaa}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>Variety's Shop</h1>
+    <p>Panel de administración</p>
+    <div id="loginAlert"></div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="loginPassword" placeholder="Ingresá tu contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-layout" id="adminLayout">
+  <div class="sidebar">
+    <div class="sidebar-brand">Variety's Shop <span>Admin Panel</span></div>
+    <div class="nav-item active" onclick="showPage('dashboard')">📊 Dashboard</div>
+    <div class="nav-item" onclick="showPage('products')">🛍️ Productos</div>
+    <div class="nav-item" onclick="showPage('settings')">⚙️ Configuración</div>
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+  </div>
+
+  <div class="main">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Productos activos</div>
+          <div class="stat-value" id="statProducts">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bundles</div>
+          <div class="stat-value" id="statBundles">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Precio promedio</div>
+          <div class="stat-value" id="statAvgPrice">$0</div>
+        </div>
+      </div>
+      <div style="background:#fff;padding:1.2rem;border-left:3px solid var(--gold)">
+        <div style="font-size:13px;font-weight:500;margin-bottom:8px">Tu tienda</div>
+        <a href="https://doneladym.github.io/varietys-shop" target="_blank" style="color:var(--gold);font-size:13px">perfumes.info-marketingdigital.com ↗</a>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="page" id="page-products">
+      <div class="page-header">
+        <div class="page-title">Productos</div>
+        <button class="btn btn-primary btn-small" onclick="openAddModal()">+ Agregar producto</button>
+      </div>
+      <div id="productsAlert"></div>
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nombre</th>
+            <th>Notas</th>
+            <th>Precio</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="productsTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div class="page-title">Configuración</div>
+      </div>
+      <div style="background:#fff;padding:1.5rem;max-width:400px">
+        <div class="form-group">
+          <label>Número de WhatsApp</label>
+          <input type="text" id="settingsPhone" placeholder="12013904027">
+        </div>
+        <div class="form-group">
+          <label>Envío gratis a partir de</label>
+          <input type="number" id="settingsShipping" placeholder="50">
+        </div>
+        <div class="form-group">
+          <label>Cambiar contraseña</label>
+          <input type="password" id="settingsPassword" placeholder="Nueva contraseña">
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR/EDITAR -->
+<div class="modal" id="productModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Agregar producto</div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalAlert"></div>
+    <div class="form-group">
+      <label>Nombre del producto</label>
+      <input type="text" id="prodName" placeholder="Ej: Lattafa Yara EDP">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Precio</label>
+        <input type="number" id="prodPrice" placeholder="36.99" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="prodType">
+          <option value="regular">Regular</option>
+          <option value="bundle">Bundle</option>
+          <option value="new">Nuevo</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notas (ej: Floral · Sweet · Feminine)</label>
+      <input type="text" id="prodNotes" placeholder="Ej: Floral · Sweet · Feminine · Arabic">
+    </div>
+    <div class="form-group">
+      <label>Foto del producto</label>
+      <div class="img-preview" id="imgPreview" onclick="document.getElementById('prodImage').click()">
+        <div class="img-preview-text">📷<br>Hacé clic para subir una foto</div>
+        <input type="file" id="prodImage" accept="image/*" onchange="previewImage(this)" style="display:none">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:1rem">
+      <button class="btn" style="background:#f5f5f5" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary btn-small" onclick="saveProduct()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = 'varietys2024';
+let products = [];
+let editingIndex = -1;
+let currentImageB64 = null;
+
+// Default products
+const DEFAULT_PRODUCTS = [
+  {name:'Elixir of Atralia EDP',notes:'Woody · Oriental · Oud Rose · Amber · Unisex',price:38.99,type:'regular',image:null},
+  {name:'Lattafa Yara EDP',notes:'Floral · Sweet · Feminine · Arabic',price:36.99,type:'regular',image:null},
+  {name:'Lattafa Asad Elixir EDP',notes:'Oriental · Oud · Leather · Arabic',price:42.99,type:'regular',image:null},
+  {name:'Tonka Gold Atralia EDP',notes:'Sweet · Woody · Oriental · Vanilla · Amber',price:36.99,type:'regular',image:null},
+  {name:'Lattafa Khamrah EDP',notes:'Oriental · Woody · Arabic',price:44.99,type:'regular',image:null},
+  {name:'Yara EDP + Roll On Set',notes:'3.4oz EDP + 10ml Roll On · Perfect Gift',price:44.99,type:'bundle',image:null},
+  {name:'GHD Style Gift Set',notes:'Heat Protect Spray + Luxury Bag · All Hair Types',price:35.00,type:'bundle',image:null},
+];
+
+function doLogin() {
+  const pwd = document.getElementById('loginPassword').value;
+  const saved = localStorage.getItem('vs_password') || ADMIN_PASSWORD;
+  if (pwd === saved) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminLayout').style.display = 'flex';
+    loadProducts();
+    updateStats();
+  } else {
+    document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">Contraseña incorrecta</div>';
+  }
+}
+
+function logout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminLayout').style.display = 'none';
+  document.getElementById('loginPassword').value = '';
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'products') renderTable();
+  if (name === 'dashboard') updateStats();
+}
+
+function loadProducts() {
+  const saved = localStorage.getItem('vs_products');
+  products = saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
+}
+
+function saveProducts() {
+  localStorage.setItem('vs_products', JSON.stringify(products));
+}
+
+function updateStats() {
+  loadProducts();
+  document.getElementById('statProducts').textContent = products.length;
+  document.getElementById('statBundles').textContent = products.filter(p => p.type === 'bundle').length;
+  const avg = products.length ? (products.reduce((s,p) => s + p.price, 0) / products.length).toFixed(2) : 0;
+  document.getElementById('statAvgPrice').textContent = '$' + avg;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('productsTableBody');
+  tbody.innerHTML = products.map((p, i) => `
+    <tr>
+      <td>${p.image ? `<img src="${p.image}" class="product-thumb">` : '<div class="product-thumb-placeholder">🛍️</div>'}</td>
+      <td><strong>${p.name}</strong></td>
+      <td style="color:#888;font-size:12px">${p.notes}</td>
+      <td><strong>$${parseFloat(p.price).toFixed(2)}</strong></td>
+      <td><span class="badge badge-${p.type}">${p.type}</span></td>
+      <td>
+        <button class="btn btn-edit" onclick="openEditModal(${i})">Editar</button>
+        <button class="btn btn-danger" onclick="deleteProduct(${i})" style="margin-left:4px">Borrar</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openAddModal() {
+  editingIndex = -1;
+  currentImageB64 = null;
+  document.getElementById('modalTitle').textContent = 'Agregar producto';
+  document.getElementById('prodName').value = '';
+  document.getElementById('prodPrice').value = '';
+  document.getElementById('prodType').value = 'regular';
+  document.getElementById('prodNotes').value = '';
+  document.getElementById('imgPreview').innerHTML = '<div class="img-preview-text">📷<br>Hacé clic para subir una foto</div><input type="file" id="prodImage" accept="image/*" onchange="previewImage(this)" style="display:none">';
+  document.getElementById('modalAlert').innerHTML = '';
+  document.getElementById('productModal').classList.add('open');
+}
+
+function openEditModal(i) {
+  editingIndex = i;
+  const p = products[i];
+  currentImageB64 = p.image || null;
+  document.getElementById('modalTitle').textContent = 'Editar producto';
+  document.getElementById('prodName').value = p.name;
+  document.getElementById('prodPrice').value = p.price;
+  document.getElementById('prodType').value = p.type;
+  document.getElementById('prodNotes').value = p.notes;
+  const preview = document.getElementById('imgPreview');
+  if (p.image) {
+    preview.innerHTML = `<img src="${p.image}"><input type="file" id="prodImage" accept="image/*" onchange="previewImage(this)" style="display:none">`;
+  } else {
+    preview.innerHTML = '<div class="img-preview-text">📷<br>Hacé clic para subir una foto</div><input type="file" id="prodImage" accept="image/*" onchange="previewImage(this)" style="display:none">';
+  }
+  document.getElementById('modalAlert').innerHTML = '';
+  document.getElementById('productModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('open');
+}
+
+function previewImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentImageB64 = e.target.result;
+    document.getElementById('imgPreview').innerHTML = `<img src="${currentImageB64}"><input type="file" id="prodImage" accept="image/*" onchange="previewImage(this)" style="display:none">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProduct() {
+  const name = document.getElementById('prodName').value.trim();
+  const price = parseFloat(document.getElementById('prodPrice').value);
+  const type = document.getElementById('prodType').value;
+  const notes = document.getElementById('prodNotes').value.trim();
+
+  if (!name || !price) {
+    document.getElementById('modalAlert').innerHTML = '<div class="alert alert-error">Completá nombre y precio.</div>';
+    return;
+  }
+
+  const product = { name, price, type, notes, image: currentImageB64 };
+
+  if (editingIndex >= 0) {
+    products[editingIndex] = product;
+  } else {
+    products.push(product);
+  }
+
+  saveProducts();
+  closeModal();
+  renderTable();
+  updateStats();
+  showAlert('productsAlert', '✅ Producto guardado. Recordá descargar el HTML actualizado.', 'success');
+}
+
+function deleteProduct(i) {
+  if (!confirm('¿Borrar este producto?')) return;
+  products.splice(i, 1);
+  saveProducts();
+  renderTable();
+  updateStats();
+  showAlert('productsAlert', '✅ Producto borrado.', 'success');
+}
+
+function saveSettings() {
+  const pwd = document.getElementById('settingsPassword').value;
+  if (pwd) localStorage.setItem('vs_password', pwd);
+  alert('Configuración guardada.');
+}
+
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => el.innerHTML = '', 4000);
+}
+
+// Allow clicking img-preview to open file dialog
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.img-preview')) {
+    const input = e.target.closest('.img-preview').querySelector('input[type=file]');
+    if (input) input.click();
+  }
+});
+</script>
+</body>
+</html>
