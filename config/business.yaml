@@ -1,0 +1,50 @@
+# Configuración del negocio — Generado por AgentKit
+negocio:
+  nombre: "VarietysShop"
+  descripcion: "Tienda de belleza, cuidado personal, fragancias y perfumes. Ubicada en New York, con envíos a todo USA."
+  horario: "Lunes a Domingo de 7:00 am a 10:00 pm"
+  ubicacion: "New York, USA"
+  envios: "Todo USA. Envío gratis en compras de $50 o más."
+
+agente:
+  nombre: "Ana"
+  tono: "Amigable, persuasiva y cálida"
+  casos_de_uso:
+    - "Responder preguntas frecuentes"
+    - "Agendar citas o reservaciones"
+    - "Calificar y atender leads / ventas"
+    - "Soporte post-venta"
+
+productos:
+  - nombre: "Elixir of Atralia EDP"
+    notas: "Woody · Oriental · Oud Rose · Amber · Unisex"
+    precio: "$38.99"
+    tipo: "regular"
+  - nombre: "Lattafa Yara EDP"
+    notas: "Floral · Sweet · Feminine · Arabic"
+    precio: "$36.99"
+    tipo: "regular"
+  - nombre: "Lattafa Asad Elixir EDP"
+    notas: "Oriental · Oud · Leather · Arabic"
+    precio: "$42.99"
+    tipo: "regular"
+  - nombre: "Tonka Gold Atralia EDP"
+    notas: "Sweet · Woody · Oriental · Vanilla · Amber"
+    precio: "$36.99"
+    tipo: "regular"
+  - nombre: "Lattafa Khamrah EDP"
+    notas: "Oriental · Woody · Arabic"
+    precio: "$44.99"
+    tipo: "regular"
+  - nombre: "Yara EDP + Roll On Set"
+    notas: "3.4oz EDP + 10ml Roll On · Perfect Gift"
+    precio: "$44.99"
+    tipo: "bundle"
+  - nombre: "GHD Style Gift Set"
+    notas: "Heat Protect Spray + Luxury Bag · All Hair Types"
+    precio: "$35.00"
+    tipo: "bundle"
+
+metadata:
+  creado: "2026-06-20"
+  version: "1.0"
